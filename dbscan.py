@@ -1,9 +1,5 @@
 from scipy.spatial import distance
 
-# def distance(p,q):
-#     return math.sqrt()
-
-
 def DBScan(dataset, epsilon, minPts):
     labels = [0]*len(dataset)
     cluster_id = 0
@@ -22,9 +18,9 @@ def DBScan(dataset, epsilon, minPts):
 def regionOfPoint(dataset, x, epsilon):
     neighbors = []
     for point in range (0, len(dataset)):
-        # if (numpy.linalg.norm(dataset[x] - dataset[point]) < epsilon):
         if (distance.euclidean(dataset[x], dataset[point]) < epsilon):
            neighbors.append(point)
+
     return neighbors
 
 def assignCluster(dataset, labels, x, neighborPts, cluster_id, epsilon, minPts):
