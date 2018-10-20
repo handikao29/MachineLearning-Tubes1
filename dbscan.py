@@ -13,6 +13,9 @@ def DBScan(dataset, epsilon, minPts):
                 cluster_id += 1
                 assignCluster(dataset, labels, x, neighborPts, cluster_id, epsilon, minPts)
 
+    for i in range(0, len(labels)):
+        if (labels[i] != -1):
+            labels[i] -= 1
     return labels
 
 def regionOfPoint(dataset, x, epsilon):

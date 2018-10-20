@@ -1,6 +1,5 @@
 from numpy import genfromtxt
 import numpy as np
-import pandas as pd
 from dbscan import DBScan
 
 def main():
@@ -13,7 +12,7 @@ def main():
     data_iris_labels = np.concatenate(data_iris_labels)
     print(list(data_iris_labels))
 
-    labels = DBScan(data_iris, 0.7, 15)
+    labels = DBScan(data_iris, 1.7, 1)
     print(labels)
     
     score = 0
