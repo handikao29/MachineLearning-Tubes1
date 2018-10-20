@@ -8,21 +8,6 @@ class Agglomerative_hierarchical:
         self.n_iterate = len(self.data) - n_cluster
 
     def Agglo(self):
-        if self.linkage == "single":
-            print("single cuy")
-            self.single()
-            # return self.single()
-        elif self.linkage == "complete":
-            # return self.complete()
-            print("complete cuy")
-        elif self.linkage == "average":
-            # return self.average()
-            print("average cuy")
-        elif self.linkage == "average_group":
-            # return self.average_group()
-            print("average group cuy")
-
-    def single(self):
         # make 2d matrix
         length_data = len(self.data)
         print ("length_data:", length_data)
@@ -34,10 +19,8 @@ class Agglomerative_hierarchical:
             self.matrix[i][i] = float('inf')
         # list of index that's lost because of merging
         self.lost_index = []
-
         # create dict for save the cluster with the lowest index as key
         self.dict_list = {}
-
         # start compute
         for iterate in range(self.n_iterate):
             for row in range(length_data-1): #no need to compute the last index in matrix because it's all zero
@@ -55,6 +38,7 @@ class Agglomerative_hierarchical:
 
             # merging two cluster
             self.merging()
+
 
     def merging(self):
         min = float('inf')
@@ -106,31 +90,39 @@ class Agglomerative_hierarchical:
 
 
     def calculate_distance(self, cl1):
-        if self.linkage == "single":
-            return self.calculate_dist_single(cl1)
-        elif self.linkage == "complete":
-            return 2
-        elif self.linkage == "average":
-            return 2
-        elif self.linkage == "average_group":
-            return self.calculate_dist_avg_group(cl1)
-
-    def calculate_dist_single(self, cl1):
-        min = float('inf')
         length_data = len(self.data)
         index_row = cl1[0]
         for column in range(index_row+1, length_data):
-            min = float('inf')
-            # print ("column in range(index_row+1, length_data):", column )
             if column in self.lost_index:
                 continue
             y = self.dict_list.get(column, False)
             if (y == False):
                 list_y = []
                 list_y.append(column)
-                self.dist_single(cl1, list_y)
+                if self.linkage == "single":
+                    self.dist_single(cl1, list_y)
+                elif self.linkage == "complete":
+                    self.dist_complete(cl1, list_y)
+                elif self.linkage == "average":
+                    self.dist_avg(cl1, list_y)
+                    # self.dist_complete(cl1, list_y)
+                elif self.linkage == "average_group":
+                    self.dist_avg_group(cl1, list_y)
+                    # self.dist_complete(cl1, list_y)
             else:
-                self.dist_single(cl1, y)
+                if self.linkage == "single":
+                    self.dist_single(cl1, y)
+                elif self.linkage == "complete":
+                    self.dist_complete(cl1, y)
+                elif self.linkage == "average":
+                    self.dist_avg(cl1, y)
+                    # self.dist_complete(cl1, list_y)
+                elif self.linkage == "average_group":
+                    self.dist_avg_group(cl1, y)
+                    # self.dist_complete(cl1, list_y)
+
+
+                # self.dist_single(cl1, y)
 
 
     def dist_single(self, list_x, list_y):
@@ -142,18 +134,35 @@ class Agglomerative_hierarchical:
                     min = dist
         self.matrix[list_x[0]][list_y[0]] = min
 
+    def dist_complete(self, list_x, list_y):
+        max = float('-inf')
+        for index_row in list_x:
+            for index_column in list_y:
+                dist = distance.euclidean(self.data[index_row], self.data[index_column])
+                if (dist > max):
+                    max = dist
+        self.matrix[list_x[0]][list_y[0]] = max
 
-
-    def calculate_dist_avg_group(self, cl1):
+    def dist_avg_group(self, list_x, list_y):
         list_cl1 = []
         list_cl2 = []
-        for index in cl1:
+        for index in list_x:
             list_cl1.append(self.data[index])
 
-        for index in cl2:
+        for index in list_y:
             list_cl2.append(self.data[index])
 
         avg_cl1 = np.mean(list_cl1, axis=0)
         avg_cl2 = np.mean(list_cl2, axis=0)
         dist = distance.euclidean(avg_cl1, avg_cl2)
-        return dist
+        self.matrix[list_x[0]][list_y[0]] = dist
+
+    def dist_avg(self, list_x, list_y):
+        sum = 0
+        n = len(list_x) + len(list_y)
+        for row in list_x:
+            for col in list_y:
+                sum += distance.euclidean(self.data[row], self.data[col])
+
+        dist = sum / n
+        self.matrix[list_x[0]][list_y[0]] = dist
