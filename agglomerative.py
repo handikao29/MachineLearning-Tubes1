@@ -21,6 +21,7 @@ class Agglomerative_hierarchical:
         self.lost_index = []
         # create dict for save the cluster with the lowest index as key
         self.dict_list = {}
+        self.last_cl = []
         # start compute
         for iterate in range(self.n_iterate):
             for row in range(length_data-1): #no need to compute the last index in matrix because it's all zero
@@ -38,6 +39,37 @@ class Agglomerative_hierarchical:
 
             # merging two cluster
             self.merging()
+
+        # singleton cluster
+        for row in range(length_data):
+            last = self.dict_list.get(row, True)
+            if ((row not in self.lost_index) and (last==True)):
+                self.last_cl.append(row)
+
+        self.all_cluster = []
+        if len(self.last_cl) > 0:
+            self.last_cl.sort()
+            for singleton in self.last_cl:
+                temp_list = []
+                temp_list.append(singleton)
+                self.all_cluster.append(temp_list)
+
+        for key, value in self.dict_list.items():
+            print ("val",value )
+            self.all_cluster.append(value)
+
+        self.label = []
+        for i in range(length_data):
+            print ("i:",i)
+            for j in range(len(self.all_cluster)):
+                print ("j:",j)
+                lst = self.all_cluster[j]
+                print ("lst:",lst)
+                if i in lst:
+                    self.label.append(j)
+                    break
+
+
 
 
     def merging(self):
