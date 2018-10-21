@@ -10,7 +10,6 @@ class Agglomerative_hierarchical:
     def Agglo(self):
         # make 2d matrix
         length_data = len(self.data)
-        print ("length_data:", length_data)
         self.matrix = [0] * (length_data-1)
         for i in range(length_data-1):
             self.matrix[i] = [0] * length_data
@@ -55,16 +54,12 @@ class Agglomerative_hierarchical:
                 self.all_cluster.append(temp_list)
 
         for key, value in self.dict_list.items():
-            print ("val",value )
             self.all_cluster.append(value)
 
         self.label = []
         for i in range(length_data):
-            print ("i:",i)
             for j in range(len(self.all_cluster)):
-                print ("j:",j)
                 lst = self.all_cluster[j]
-                print ("lst:",lst)
                 if i in lst:
                     self.label.append(j)
                     break
